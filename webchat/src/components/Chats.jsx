@@ -1,41 +1,58 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "../firebase";
+import { AuthContext } from "../context/AuthContext";
+import { ChatContext } from "../context/ChatContext";
 
 const Chats = () => {
+  const [chats, setChats] = useState([]);
+
+  const { currentUser } = useContext(AuthContext);
+  const { dispatch } = useContext(ChatContext);
+
+  useEffect(() => {
+    const getChats = () => {
+      const unsub = onSnapshot(doc(db, "userChats", currentUser.uid), (doc) => {
+        setChats(doc.data());
+      });
+
+      return () => {
+        unsub();
+      };
+    };
+
+    currentUser.uid && getChats();
+  }, [currentUser.uid]);
+
+  console.log(chats);
+  console.log(Object.entries(chats));
+
+  const handleSelect = (u) => {
+    console.log(u);
+    dispatch({ type: "CHANGE_USER", payload: u });
+  };
+
   return (
     <div className="chats">
-      <div className="userChat">
-        <img
-          className="profile"
-          src="https://images.pexels.com/photos/16024276/pexels-photo-16024276/free-photo-of-portrait-of-woman-with-purple-orchids-in-her-hair.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-          alt=""
-        />
-        <div className="userChatInfo">
-          <span style={{ fontSize: "20px", fontWeight: "500" }}>Rohan</span>
-          <p style={{ fontSize: "12px", color: "lightgrey" }}>awd</p>
-        </div>
-      </div>
-      <div className="userChat">
-        <img
-          className="profile"
-          src="https://images.pexels.com/photos/16024276/pexels-photo-16024276/free-photo-of-portrait-of-woman-with-purple-orchids-in-her-hair.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-          alt=""
-        />
-        <div className="userChatInfo">
-          <span style={{ fontSize: "20px", fontWeight: "500" }}>Rohan</span>
-          <p style={{ fontSize: "12px", color: "lightgrey" }}>awd</p>
-        </div>
-      </div>
-      <div className="userChat">
-        <img
-          className="profile"
-          src="https://images.pexels.com/photos/16024276/pexels-photo-16024276/free-photo-of-portrait-of-woman-with-purple-orchids-in-her-hair.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-          alt=""
-        />
-        <div className="userChatInfo">
-          <span style={{ fontSize: "20px", fontWeight: "500" }}>Rohan</span>
-          <p style={{ fontSize: "12px", color: "lightgrey" }}>awd</p>
-        </div>
-      </div>{" "}
+      {Object.entries(chats)
+        .sort((a, b) => console.log(a[1].date.seconds - b[1].date.seconds) )
+        .map((chat) => (
+          <div
+            className="userChat"
+            key={chat[0]}
+            onClick={() => handleSelect(chat[1].userInfo)}
+          >
+            <img className="profile" src={chat[1].userInfo.photoURL} alt="" />
+            <div className="userChatInfo">
+              <span style={{ fontSize: "20px", fontWeight: "500" }}>
+                {chat[1].userInfo.displayName}
+              </span>
+              <p style={{ fontSize: "12px", color: "lightgrey" }}>
+                {chat[1].lastMessage?.text}
+              </p>
+            </div>
+          </div>
+        ))}
     </div>
   );
 };
