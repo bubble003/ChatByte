@@ -1,23 +1,25 @@
 /* eslint-disable react/prop-types */
+
 import React, { useContext, useEffect, useRef } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { ChatContext } from "../context/ChatContext";
 
 const Message = ({ message }) => {
-  const { currentUser } = useContext(AuthContext);
-  const { data } = useContext(ChatContext);
+  
+  const {currentUser} = useContext(AuthContext);
+  const {data} = useContext(ChatContext);
+  // console.log(message);
+  // console.log(message.senderId , currentUser.uid);
+  // console.log(currentUser.photoURL , data.user.photoURL);
 
   const ref = useRef();
-
+  // console.log(typeof(message));
   useEffect(() => {
-    ref.current?.scrollIntoView({ behavior: "smooth" });
+    ref.current?.scrollIntoView({ behaviour: "smooth" });
   }, [message]);
 
   return (
-    <div
-      ref={ref}
-      className={`message ${message.senderId === currentUser.uid && "owner"}`}
-    >
+    <div ref = {ref} className={`message ${message.senderId === currentUser.uid && "owner"}`}>
       <div className="messageInfo">
         <img
           src={
@@ -27,11 +29,14 @@ const Message = ({ message }) => {
           }
           alt=""
         />
-        <span>just now</span>
+        <span> Just Now </span>
       </div>
       <div className="messageContent">
         <p>{message.text}</p>
-        {message.img && <img src={message.img} alt="" />}
+        {message.img && <img 
+          src={message.img}
+          alt=""
+        />}
       </div>
     </div>
   );
