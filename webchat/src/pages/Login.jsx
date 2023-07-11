@@ -1,24 +1,41 @@
-import React from "react";
-import addAvatar from "../assets/addAvatar.png";
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
 
 const Login = () => {
+  const [err, setErr] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const email = e.target[0].value;
+    const password = e.target[1].value;
+    console.log(e.target[0].value);
+    console.log(e.target[1].value);
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate("/");
+    } catch (err) {
+      setErr(true);
+    }
+  };
+
   return (
     <div className="formContainer">
       <div className="formWrapper">
-        <span className="logo">XXXXX</span>
-        <span className="title">Register</span>
-        <form>
-          <input type="text" placeholder="Display name" />
+        <span className="logo">Lama Chat</span>
+        <span className="title">Login</span>
+        <form onSubmit={handleSubmit}>
           <input type="email" placeholder="Email" />
           <input type="password" placeholder="Password" />
-          <input style={{ display: "none" }} type="file" id="file" />
-          <label style={{ cursor: "pointer" }} htmlFor="file">
-            <img src={addAvatar} alt="avatar_img" />
-            <span> Add an avatar </span>
-          </label>
-          <button> Sign up</button>
+          <button> Register </button>
+          {err && <span>Something went wrong</span>}
         </form>
-        <p>You do not have an account? Login</p>
+        <p>
+          You have an account? <Link to="/Register">Register</Link>
+        </p>
       </div>
     </div>
   );
