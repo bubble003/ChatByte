@@ -35,7 +35,7 @@ const Chats = () => {
   return (
     <div className="chats">
       {Object.entries(chats)
-        .sort((a, b) => console.log(a[1].date.seconds - b[1].date.seconds) )
+        .sort((a, b) => console.log(b[1].date.seconds - a[1].date.seconds) )
         .map((chat) => (
           <div
             className="userChat"
