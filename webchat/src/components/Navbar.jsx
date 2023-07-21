@@ -8,10 +8,10 @@ const Navbar = () => {
 
   return (
     <div className="navbar">
-      <span className="logo">XXXXX</span>
+      <span className="logo2">ChatByte</span>
       <div className="user">
         <img className="avatar" src={currentUser.photoURL} alt="avatar" />
-        <span> {currentUser.displayName} </span>
+        <h3 style={{color: "whitesmoke"}}> {currentUser.displayName} </h3>
         <button
           style={{
             borderBottom: "1px solid black",
